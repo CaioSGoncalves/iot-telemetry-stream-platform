@@ -2,33 +2,68 @@
 
 ## Overview
 
-The **IoT Telemetry Stream Platform** is a distributed event-driven system designed to ingest, process, and analyze high-volume sensor telemetry data in real time.
-
-The project simulates an industrial IoT streaming pipeline capable of handling large-scale event ingestion and stream processing.
-
-The system is built using modern cloud-native technologies including **Apache Kafka**, **Apache Flink**, and **Kubernetes**, focusing on distributed systems design and high-throughput event pipelines.
-
-The architecture is inspired by real-world telemetry and observability platforms used in companies such as **Uber** and **LinkedIn**.
+The **IoT Telemetry Stream Platform** is a real-time IoT telemetry streaming platform built with Go microservices, Kafka event streaming, and Flink-based stream processing.
 
 ---
 
-## Problem Domain
-
-Industrial and IoT environments generate continuous streams of sensor data including:
-
-- Temperature
-- Vibration
-- Pressure
-- Current consumption
-- Machine telemetry signals
-
-These systems require:
-
-- Low-latency ingestion
-- Fault-tolerant pipelines
-- Scalable event processing
-- Real-time anomaly detection
+Input
+↓
+Ingestion
+↓
+Streaming Processing
+↓
+Storage
+↓
+Dashboards (Output)
 
 ---
 
-## Architecture
+## Input:
+1 - Device Telemetry schema:
+```json
+{
+  "event_id": "string",
+  "device_id": "string",
+  "timestamp": "int64",
+  "event_type": "string",
+  "schema_version": "int",
+
+  "metrics": {
+    "temperature": "float",
+    "pressure": "float",
+    "vibration": "float"
+  },
+
+  "metadata": {
+    "location": "string",
+    "firmware_version": "string"
+  }
+}
+```
+
+---
+
+## Output - Dashboards
+1 - Ingestion Health Dashboard:
+    - event-generator -> ingestion-service -> kafka
+    - Metrics: 
+        - Events per second
+        - Ingestion latency
+        - Publish success rate
+        - Broker throughput
+        - Queue backlog
+
+2 - Aggregation Analytics Dashboard:
+    kafka -> aggregator-streaming -> clickhouse -> dashboard
+    - Metrics: 
+        - Mean temperature per device
+        - Vibration trend over time
+        - Events per minute
+
+3 - Anomaly Detection Dashboard:
+    kafka -> anomaly-detector-streaming -> clickhouse
+    - Metrics: 
+        - Anomaly score distribution
+        - Alert frequency
+        - Detection latency
+        - False positive signals
